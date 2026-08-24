@@ -1,0 +1,975 @@
+fileFormatVersion: 2
+guid: 0e729f1ef378bdf4da3986390b619121
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 4004378420442079275
+    second: Green Bear 1_0
+  - first:
+      213: -5121789321771990926
+    second: Green Bear 1_1
+  - first:
+      213: -8513322195333104120
+    second: Green Bear 1_2
+  - first:
+      213: -5844485658886079776
+    second: Green Bear 1_3
+  - first:
+      213: -6974721554088664225
+    second: Green Bear 1_4
+  - first:
+      213: -163830370799349356
+    second: Green Bear 1_5
+  - first:
+      213: -3603246782085371086
+    second: Green Bear 1_6
+  - first:
+      213: 6597563922725983934
+    second: Green Bear 1_7
+  - first:
+      213: 1166571359010761805
+    second: Green Bear 1_8
+  - first:
+      213: -8011410231435635440
+    second: Green Bear 1_9
+  - first:
+      213: -48342139375738307
+    second: Green Bear 1_10
+  - first:
+      213: 3896090298051310565
+    second: Green Bear 1_11
+  - first:
+      213: 2131727246036318195
+    second: Green Bear 1_12
+  - first:
+      213: 326061974094455340
+    second: Green Bear 1_13
+  - first:
+      213: -2743303815649930525
+    second: Green Bear 1_14
+  - first:
+      213: -657589959336855698
+    second: Green Bear 1_15
+  - first:
+      213: 2637983296201041054
+    second: Green Bear 1_16
+  - first:
+      213: 5801138770254065191
+    second: Green Bear 1_17
+  - first:
+      213: 1909602173079072269
+    second: Green Bear 1_18
+  - first:
+      213: 6084019145552833736
+    second: Green Bear 1_19
+  - first:
+      213: -7671300027721961501
+    second: Green Bear 1_20
+  - first:
+      213: 4732551122644556234
+    second: Green Bear 1_21
+  - first:
+      213: -1653915607016040222
+    second: Green Bear 1_22
+  - first:
+      213: -7496290469601917901
+    second: Green Bear 1_23
+  - first:
+      213: -1099694231230952440
+    second: Green Bear 1_24
+  - first:
+      213: -1938196657507540690
+    second: Green Bear 1_25
+  - first:
+      213: 3526249369136698826
+    second: Green Bear 1_26
+  - first:
+      213: 499242856895452446
+    second: Green Bear 1_27
+  - first:
+      213: 3722917246725648888
+    second: Green Bear 1_28
+  - first:
+      213: 9029251740047260782
+    second: Green Bear 1_29
+  - first:
+      213: -4177175378515024340
+    second: Green Bear 1_30
+  - first:
+      213: -5330930274643117816
+    second: Green Bear 1_31
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 512
+    resizeAlgorithm: 0
+    textureFormat: 12
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Green Bear 1_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1268
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b20a0b015f8629730800000000000000
+      internalID: 4004378420442079275
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1221
+        height: 1258
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 270446d8fbfbbe8b0800000000000000
+      internalID: -5121789321771990926
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_2
+      rect:
+        serializedVersion: 2
+        x: 1115
+        y: 1248
+        width: 9
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80eb8b0a19a9ad980800000000000000
+      internalID: -8513322195333104120
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_3
+      rect:
+        serializedVersion: 2
+        x: 1143
+        y: 1199
+        width: 85
+        height: 62
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0eafa37324734eea0800000000000000
+      internalID: -5844485658886079776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_4
+      rect:
+        serializedVersion: 2
+        x: 1163
+        y: 1168
+        width: 34
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f53e84143bfc43f90800000000000000
+      internalID: -6974721554088664225
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_5
+      rect:
+        serializedVersion: 2
+        x: 1177
+        y: 1158
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 49195115525f9bdf0800000000000000
+      internalID: -163830370799349356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_6
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 1008
+        width: 10
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23b6bbb7422befdc0800000000000000
+      internalID: -3603246782085371086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_7
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 932
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb6d30dae614f8b50800000000000000
+      internalID: 6597563922725983934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_8
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 922
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d4c2bf2687e703010800000000000000
+      internalID: 1166571359010761805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_9
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 920
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 015595d37d0c1d090800000000000000
+      internalID: -8011410231435635440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_10
+      rect:
+        serializedVersion: 2
+        x: 24
+        y: 858
+        width: 17
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d32a3d29411445ff0800000000000000
+      internalID: -48342139375738307
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_11
+      rect:
+        serializedVersion: 2
+        x: 1147
+        y: 818
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5e3b134db71b11630800000000000000
+      internalID: 3896090298051310565
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_12
+      rect:
+        serializedVersion: 2
+        x: 1177
+        y: 788
+        width: 14
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3f7340ac2aa659d10800000000000000
+      internalID: 2131727246036318195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_13
+      rect:
+        serializedVersion: 2
+        x: 1169
+        y: 724
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c22a9ac43a7668400800000000000000
+      internalID: 326061974094455340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_14
+      rect:
+        serializedVersion: 2
+        x: 1188
+        y: 732
+        width: 7
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3e2563dd6b3dde9d0800000000000000
+      internalID: -2743303815649930525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_15
+      rect:
+        serializedVersion: 2
+        x: 1159
+        y: 642
+        width: 18
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e67fcd18a65cfd6f0800000000000000
+      internalID: -657589959336855698
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_16
+      rect:
+        serializedVersion: 2
+        x: 1171
+        y: 640
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e942a7dc4dffb9420800000000000000
+      internalID: 2637983296201041054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_17
+      rect:
+        serializedVersion: 2
+        x: 1095
+        y: 455
+        width: 51
+        height: 67
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 72e6dbdc9f8c18050800000000000000
+      internalID: 5801138770254065191
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_18
+      rect:
+        serializedVersion: 2
+        x: 1124
+        y: 441
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0e21b41f05408a10800000000000000
+      internalID: 1909602173079072269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_19
+      rect:
+        serializedVersion: 2
+        x: 1196
+        y: 435
+        width: 10
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8cc2a59ad27ce6450800000000000000
+      internalID: 6084019145552833736
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_20
+      rect:
+        serializedVersion: 2
+        x: 1165
+        y: 360
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3ef2032e4411a8590800000000000000
+      internalID: -7671300027721961501
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_21
+      rect:
+        serializedVersion: 2
+        x: 1168
+        y: 357
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac9da920c266da140800000000000000
+      internalID: 4732551122644556234
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_22
+      rect:
+        serializedVersion: 2
+        x: 1139
+        y: 294
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2e8955ba48c1c09e0800000000000000
+      internalID: -1653915607016040222
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_23
+      rect:
+        serializedVersion: 2
+        x: 63
+        y: 279
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3344b32f883d7f790800000000000000
+      internalID: -7496290469601917901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_24
+      rect:
+        serializedVersion: 2
+        x: 1117
+        y: 225
+        width: 17
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 80ccee15ce91db0f0800000000000000
+      internalID: -1099694231230952440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_25
+      rect:
+        serializedVersion: 2
+        x: 1161
+        y: 241
+        width: 18
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e21e964b8642a15e0800000000000000
+      internalID: -1938196657507540690
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_26
+      rect:
+        serializedVersion: 2
+        x: 1178
+        y: 241
+        width: 11
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac596dc4e11cfe030800000000000000
+      internalID: 3526249369136698826
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_27
+      rect:
+        serializedVersion: 2
+        x: 1107
+        y: 115
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1597e5bbbaade600800000000000000
+      internalID: 499242856895452446
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_28
+      rect:
+        serializedVersion: 2
+        x: 1113
+        y: 100
+        width: 43
+        height: 44
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8f1f143d2857aa330800000000000000
+      internalID: 3722917246725648888
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_29
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 69
+        width: 5
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6c38195e985e4d70800000000000000
+      internalID: 9029251740047260782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_30
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 79
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c26aa17ff11b706c0800000000000000
+      internalID: -4177175378515024340
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Green Bear 1_31
+      rect:
+        serializedVersion: 2
+        x: 184
+        y: 22
+        width: 9
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8097581e82bb406b0800000000000000
+      internalID: -5330930274643117816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Green Bear 1_0: 4004378420442079275
+      Green Bear 1_1: -5121789321771990926
+      Green Bear 1_10: -48342139375738307
+      Green Bear 1_11: 3896090298051310565
+      Green Bear 1_12: 2131727246036318195
+      Green Bear 1_13: 326061974094455340
+      Green Bear 1_14: -2743303815649930525
+      Green Bear 1_15: -657589959336855698
+      Green Bear 1_16: 2637983296201041054
+      Green Bear 1_17: 5801138770254065191
+      Green Bear 1_18: 1909602173079072269
+      Green Bear 1_19: 6084019145552833736
+      Green Bear 1_2: -8513322195333104120
+      Green Bear 1_20: -7671300027721961501
+      Green Bear 1_21: 4732551122644556234
+      Green Bear 1_22: -1653915607016040222
+      Green Bear 1_23: -7496290469601917901
+      Green Bear 1_24: -1099694231230952440
+      Green Bear 1_25: -1938196657507540690
+      Green Bear 1_26: 3526249369136698826
+      Green Bear 1_27: 499242856895452446
+      Green Bear 1_28: 3722917246725648888
+      Green Bear 1_29: 9029251740047260782
+      Green Bear 1_3: -5844485658886079776
+      Green Bear 1_30: -4177175378515024340
+      Green Bear 1_31: -5330930274643117816
+      Green Bear 1_4: -6974721554088664225
+      Green Bear 1_5: -163830370799349356
+      Green Bear 1_6: -3603246782085371086
+      Green Bear 1_7: 6597563922725983934
+      Green Bear 1_8: 1166571359010761805
+      Green Bear 1_9: -8011410231435635440
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
