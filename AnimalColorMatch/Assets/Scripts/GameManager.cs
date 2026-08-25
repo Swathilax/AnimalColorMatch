@@ -446,7 +446,7 @@ public class GameManager : MonoBehaviour
 
         float duration = 0.3f;
         float timer = 0f;
-        Vector3 targetScale = Vector3.one;
+        Vector3 targetScale = new Vector3(2f, 2f, 2f);
 
         while (timer < duration)
         {
