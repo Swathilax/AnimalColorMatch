@@ -427,6 +427,9 @@ public class GameManager : MonoBehaviour
         {
             correctAnswers++;
 
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayCorrectAnswer();
+
             Debug.Log(
                 "CORRECT! Selected: " +
                 selectedColor +
@@ -441,6 +444,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayWrongAnswer();
+
             Debug.Log(
                 "WRONG! Selected: " +
                 selectedColor +
@@ -494,6 +500,9 @@ public class GameManager : MonoBehaviour
         if (levelCompletedPanel != null)
             levelCompletedPanel.SetActive(true);
 
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayLevelCompleted();
+
         Debug.Log(
             "LEVEL COMPLETE! Correct Answers: " +
             correctAnswers
@@ -516,6 +525,9 @@ public class GameManager : MonoBehaviour
 
         if (levelFailedPanel != null)
             levelFailedPanel.SetActive(true);
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayLevelFailed();
 
         Debug.Log(
             "LEVEL FAILED! Correct Answers: " +

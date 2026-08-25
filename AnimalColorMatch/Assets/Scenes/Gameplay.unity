@@ -3125,14 +3125,14 @@ MonoBehaviour:
   livesText: {fileID: 301653006}
   levelCompletedPanel: {fileID: 549776610}
   levelFailedPanel: {fileID: 1859653587}
-  pausePanel: {fileID: 0}
+  pausePanel: {fileID: 377971311}
   answerButtons:
   - {fileID: 1991275}
   - {fileID: 1325886922}
   - {fileID: 719256072}
   - {fileID: 898710851}
-  pauseButton: {fileID: 0}
-  resumeButton: {fileID: 0}
+  pauseButton: {fileID: 1644488465}
+  resumeButton: {fileID: 240832397}
 --- !u!4 &1937551882
 Transform:
   m_ObjectHideFlags: 0
@@ -3581,7 +3581,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2063101784}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2063101784
 MonoBehaviour:
   m_ObjectHideFlags: 0
