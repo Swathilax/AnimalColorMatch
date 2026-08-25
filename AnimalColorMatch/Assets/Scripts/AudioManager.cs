@@ -85,16 +85,20 @@ public class AudioManager : MonoBehaviour
         yield return null;
 
 #if UNITY_2023_1_OR_NEWER
-        SettingsUIController[] controllers = FindObjectsByType<SettingsUIController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        SettingsUIController[] uiControllers = FindObjectsByType<SettingsUIController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        AudioToggleButton[]    toggleButtons  = FindObjectsByType<AudioToggleButton>(FindObjectsInactive.Include, FindObjectsSortMode.None);
 #else
-        SettingsUIController[] controllers = Resources.FindObjectsOfTypeAll<SettingsUIController>();
+        SettingsUIController[] uiControllers = Resources.FindObjectsOfTypeAll<SettingsUIController>();
+        AudioToggleButton[]    toggleButtons  = Resources.FindObjectsOfTypeAll<AudioToggleButton>();
 #endif
-        foreach (SettingsUIController ctrl in controllers)
+        foreach (SettingsUIController ctrl in uiControllers)
         {
-            if (ctrl != null)
-            {
-                ctrl.ForceRefreshUI();
-            }
+            if (ctrl != null) ctrl.ForceRefreshUI();
+        }
+
+        foreach (AudioToggleButton btn in toggleButtons)
+        {
+            if (btn != null) btn.SyncVisibility();
         }
     }
 
@@ -265,6 +269,7 @@ public class AudioManager : MonoBehaviour
 
         ApplyMusicSettings();
         OnMusicStateChanged?.Invoke(isMusicEnabled);
+        SyncAllToggleButtons();
     }
 
     public void ToggleMusic()
@@ -280,11 +285,30 @@ public class AudioManager : MonoBehaviour
 
         ApplySoundSettings();
         OnSoundStateChanged?.Invoke(isSoundEnabled);
+        SyncAllToggleButtons();
     }
 
     public void ToggleSound()
     {
         SetSoundEnabled(!isSoundEnabled);
+    }
+
+    /// <summary>
+    /// Finds every AudioToggleButton in the scene (including inactive siblings)
+    /// and syncs their visibility to the current audio state.
+    /// This is what makes the partner button appear when you click the other one.
+    /// </summary>
+    private void SyncAllToggleButtons()
+    {
+#if UNITY_2023_1_OR_NEWER
+        AudioToggleButton[] buttons = FindObjectsByType<AudioToggleButton>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+#else
+        AudioToggleButton[] buttons = Resources.FindObjectsOfTypeAll<AudioToggleButton>();
+#endif
+        foreach (AudioToggleButton btn in buttons)
+        {
+            if (btn != null) btn.SyncVisibility();
+        }
     }
 
     public bool IsMusicEnabled()

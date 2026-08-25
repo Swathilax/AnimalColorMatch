@@ -2296,7 +2296,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioToggleButton
   toggleType: 1
-  partnerObject: {fileID: 845527203}
 --- !u!1 &987858466
 GameObject:
   m_ObjectHideFlags: 0
@@ -2739,7 +2738,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioToggleButton
   toggleType: 0
-  partnerObject: {fileID: 1175690896}
 --- !u!1 &1249154467
 GameObject:
   m_ObjectHideFlags: 0
@@ -3232,7 +3230,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioToggleButton
   toggleType: 2
-  partnerObject: {fileID: 1501696128}
 --- !u!1 &1540519892
 GameObject:
   m_ObjectHideFlags: 0
@@ -4271,7 +4268,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioToggleButton
   toggleType: 3
-  partnerObject: {fileID: 1675573495}
 --- !u!1 &1725413045
 GameObject:
   m_ObjectHideFlags: 0
