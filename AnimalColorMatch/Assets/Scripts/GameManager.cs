@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -34,9 +35,12 @@ public class GameManager : MonoBehaviour
     [Header("Answer Buttons")]
     public Button[] answerButtons;
 
-    [Header("Pause Controls")]
+    [Header("Pause & UI Controls")]
     public Button pauseButton;
     public Button resumeButton;
+    public List<Button> restartButtons = new List<Button>();
+    public List<Button> homeButtons = new List<Button>();
+    public List<Button> nextLevelButtons = new List<Button>();
 
     private Sprite currentSprite;
     private string currentCorrectColor;
@@ -86,6 +90,18 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        if (levelCompletedPanel == null)
+        {
+            GameObject compObj = GameObject.Find("Level Completed");
+            if (compObj != null) levelCompletedPanel = compObj;
+        }
+
+        if (levelFailedPanel == null)
+        {
+            GameObject failObj = GameObject.Find("LevelFailed");
+            if (failObj != null) levelFailedPanel = failObj;
+        }
+
         if (pauseButton == null)
         {
             GameObject pBtn = GameObject.Find("Pause Btn");
@@ -116,6 +132,54 @@ public class GameManager : MonoBehaviour
         {
             resumeButton.onClick.RemoveListener(ResumeGame);
             resumeButton.onClick.AddListener(ResumeGame);
+        }
+
+        // Auto find any unassigned popup buttons in panels
+        AutoFindPanelButtons();
+
+        // Register click listeners for all buttons in the lists
+        RegisterButtonList(restartButtons, RetryLevel);
+        RegisterButtonList(homeButtons, GoHome);
+        RegisterButtonList(nextLevelButtons, NextLevel);
+    }
+
+    private void AutoFindPanelButtons()
+    {
+        GameObject[] panels = { pausePanel, levelCompletedPanel, levelFailedPanel };
+        foreach (GameObject panel in panels)
+        {
+            if (panel == null) continue;
+            Button[] btns = panel.GetComponentsInChildren<Button>(true);
+            foreach (Button b in btns)
+            {
+                if (b == null) continue;
+                string bName = b.gameObject.name.ToLower();
+                if ((bName.Contains("restart") || bName.Contains("retry")) && !restartButtons.Contains(b))
+                {
+                    restartButtons.Add(b);
+                }
+                else if (bName.Contains("home") && !homeButtons.Contains(b))
+                {
+                    homeButtons.Add(b);
+                }
+                else if (bName.Contains("next") && !nextLevelButtons.Contains(b))
+                {
+                    nextLevelButtons.Add(b);
+                }
+            }
+        }
+    }
+
+    private void RegisterButtonList(List<Button> buttons, UnityEngine.Events.UnityAction action)
+    {
+        if (buttons == null) return;
+        foreach (Button btn in buttons)
+        {
+            if (btn != null)
+            {
+                btn.onClick.RemoveListener(action);
+                btn.onClick.AddListener(action);
+            }
         }
     }
 
@@ -233,6 +297,9 @@ public class GameManager : MonoBehaviour
         if (!gameRunning || isPaused)
             return;
 
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayButtonClick();
+
         isPaused = true;
         Time.timeScale = 0f;
 
@@ -248,6 +315,9 @@ public class GameManager : MonoBehaviour
     {
         if (!gameRunning || !isPaused)
             return;
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayButtonClick();
 
         isPaused = false;
         Time.timeScale = 1f;
@@ -549,17 +619,43 @@ public class GameManager : MonoBehaviour
 
     public void RetryLevel()
     {
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayButtonClick();
+
+        Time.timeScale = 1f;
         StartLevel();
+    }
+
+    public void RestartScene()
+    {
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayButtonClick();
+
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
     public void NextLevel()
     {
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayButtonClick();
+
+        Time.timeScale = 1f;
         StartLevel();
     }
 
     public string GetCurrentCorrectColor()
     {
         return currentCorrectColor;
+    }
+
+    public void GoHome()
+    {
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayButtonClick();
+
+        Time.timeScale = 1f;
+        UnityEngine.SceneManagement.SceneManager.LoadScene("HomeScreen");
     }
 
     public void RedButton()

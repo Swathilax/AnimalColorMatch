@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
@@ -50,6 +52,52 @@ public class AudioManager : MonoBehaviour
         LoadSettings();
     }
 
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    /// <summary>
+    /// Called every time a new scene finishes loading.
+    /// Actively refreshes all SettingsUIControllers — including inactive ones.
+    /// This is the reliable fix for Settings UI breaking after returning from Gameplay.
+    /// </summary>
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ApplyMusicSettings();
+        ApplySoundSettings();
+
+        OnMusicStateChanged?.Invoke(isMusicEnabled);
+        OnSoundStateChanged?.Invoke(isSoundEnabled);
+
+        // Wait one frame then force-refresh all SettingsUIControllers in the scene,
+        // including those on inactive GameObjects (parent panels that are hidden).
+        StartCoroutine(RefreshSettingsUINextFrame());
+    }
+
+    private IEnumerator RefreshSettingsUINextFrame()
+    {
+        yield return null;
+
+#if UNITY_2023_1_OR_NEWER
+        SettingsUIController[] controllers = FindObjectsByType<SettingsUIController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+#else
+        SettingsUIController[] controllers = Resources.FindObjectsOfTypeAll<SettingsUIController>();
+#endif
+        foreach (SettingsUIController ctrl in controllers)
+        {
+            if (ctrl != null)
+            {
+                ctrl.ForceRefreshUI();
+            }
+        }
+    }
+
     private void Start()
     {
         if (playBgmOnStart && bgmClip != null && isMusicEnabled)
@@ -87,19 +135,23 @@ public class AudioManager : MonoBehaviour
 
     private void ApplyMusicSettings()
     {
-        if (bgmSource != null)
-        {
-            bgmSource.mute = !isMusicEnabled;
-            bgmSource.volume = bgmVolume;
+        if (bgmSource == null) return;
 
-            if (isMusicEnabled)
+        bgmSource.volume = bgmVolume;
+
+        if (isMusicEnabled)
+        {
+            bgmSource.mute = false;
+            if (!bgmSource.isPlaying && bgmClip != null)
             {
-                if (!bgmSource.isPlaying && bgmClip != null)
-                {
-                    bgmSource.clip = bgmClip;
-                    bgmSource.Play();
-                }
+                bgmSource.clip = bgmClip;
+                bgmSource.Play();
             }
+        }
+        else
+        {
+            // Stop completely — more reliable than mute across scene changes
+            bgmSource.Stop();
         }
     }
 
@@ -107,7 +159,7 @@ public class AudioManager : MonoBehaviour
     {
         if (sfxSource != null)
         {
-            sfxSource.mute = !isSoundEnabled;
+            sfxSource.mute   = !isSoundEnabled;
             sfxSource.volume = sfxVolume;
         }
     }

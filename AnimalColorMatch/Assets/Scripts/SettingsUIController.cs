@@ -1,174 +1,203 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Self-contained Music/Sound settings toggle UI controller.
+/// 
+/// HOW TO USE IN UNITY INSPECTOR:
+///   1. Assign musicOnObject, musicOffObject, soundOnObject, soundOffObject in Inspector.
+///   2. On the Music button OnClick:    call SettingsUIController.OnMusicOnClicked()
+///   3. On the MusicOff button OnClick: call SettingsUIController.OnMusicOffClicked()
+///   4. On the Sound button OnClick:    call SettingsUIController.OnSoundOnClicked()
+///   5. On the SoundOff button OnClick: call SettingsUIController.OnSoundOffClicked()
+///   6. REMOVE any old GameObject.SetActive calls from button OnClick Inspector events.
+///
+/// The script handles ALL SetActive logic itself.
+/// Uses Update() to always keep UI in sync — works regardless of scene history.
+/// </summary>
 public class SettingsUIController : MonoBehaviour
 {
     [Header("Music UI Elements")]
-    [Tooltip("The GameObject / Button shown when Music is ON")]
+    [Tooltip("GameObject shown when Music is ON (clicking this turns music OFF)")]
     public GameObject musicOnObject;
-    [Tooltip("The GameObject / Button shown when Music is OFF")]
+    [Tooltip("GameObject shown when Music is OFF (clicking this turns music ON)")]
     public GameObject musicOffObject;
 
     [Header("Sound UI Elements")]
-    [Tooltip("The GameObject / Button shown when Sound is ON")]
+    [Tooltip("GameObject shown when Sound is ON (clicking this turns sound OFF)")]
     public GameObject soundOnObject;
-    [Tooltip("The GameObject / Button shown when Sound is OFF")]
+    [Tooltip("GameObject shown when Sound is OFF (clicking this turns sound ON)")]
     public GameObject soundOffObject;
+
+    private bool _lastMusicState = true;
+    private bool _lastSoundState = true;
+
+    // ---------------------------------------------------------------
+    // Lifecycle
+    // ---------------------------------------------------------------
 
     private void Awake()
     {
-        SetupButtonListeners();
+        WireButtonListeners();
     }
 
     private void OnEnable()
     {
-        UpdateUI();
-
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.OnMusicStateChanged += HandleMusicStateChanged;
-            AudioManager.Instance.OnSoundStateChanged += HandleSoundStateChanged;
-        }
-    }
-
-    private void OnDisable()
-    {
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.OnMusicStateChanged -= HandleMusicStateChanged;
-            AudioManager.Instance.OnSoundStateChanged -= HandleSoundStateChanged;
-        }
+        // Wire listeners in case Awake was skipped (parent was inactive at scene load)
+        WireButtonListeners();
+        ForceRefreshUI();
+        StartCoroutine(RefreshNextFrame());
     }
 
     private void Start()
     {
-        UpdateUI();
+        WireButtonListeners();
+        ForceRefreshUI();
     }
 
-    private void SetupButtonListeners()
+    /// <summary>
+    /// Lightweight Update: detects any state change and refreshes UI.
+    /// Only runs while this component is active (settings panel is open).
+    /// </summary>
+    private void Update()
     {
-        // Auto-wire buttons if attached
-        if (musicOnObject != null)
-        {
-            Button btn = musicOnObject.GetComponent<Button>();
-            if (btn != null)
-            {
-                btn.onClick.RemoveListener(OnMusicOnClicked);
-                btn.onClick.AddListener(OnMusicOnClicked);
-            }
-        }
+        bool musicNow = GetMusicEnabled();
+        bool soundNow = GetSoundEnabled();
 
-        if (musicOffObject != null)
+        if (musicNow != _lastMusicState || soundNow != _lastSoundState)
         {
-            Button btn = musicOffObject.GetComponent<Button>();
-            if (btn != null)
-            {
-                btn.onClick.RemoveListener(OnMusicOffClicked);
-                btn.onClick.AddListener(OnMusicOffClicked);
-            }
-        }
-
-        if (soundOnObject != null)
-        {
-            Button btn = soundOnObject.GetComponent<Button>();
-            if (btn != null)
-            {
-                btn.onClick.RemoveListener(OnSoundOnClicked);
-                btn.onClick.AddListener(OnSoundOnClicked);
-            }
-        }
-
-        if (soundOffObject != null)
-        {
-            Button btn = soundOffObject.GetComponent<Button>();
-            if (btn != null)
-            {
-                btn.onClick.RemoveListener(OnSoundOffClicked);
-                btn.onClick.AddListener(OnSoundOffClicked);
-            }
+            _lastMusicState = musicNow;
+            _lastSoundState = soundNow;
+            ApplyUIState(musicNow, soundNow);
         }
     }
 
-    public void UpdateUI()
-    {
-        bool musicEnabled = AudioManager.Instance != null ? AudioManager.Instance.IsMusicEnabled() : (PlayerPrefs.GetInt("MusicEnabled", 1) == 1);
-        bool soundEnabled = AudioManager.Instance != null ? AudioManager.Instance.IsSoundEnabled() : (PlayerPrefs.GetInt("SoundEnabled", 1) == 1);
+    // ---------------------------------------------------------------
+    // Button Listener Setup (idempotent — safe to call multiple times)
+    // ---------------------------------------------------------------
 
-        UpdateMusicUI(musicEnabled);
-        UpdateSoundUI(soundEnabled);
+    private void WireButtonListeners()
+    {
+        AddListener(musicOnObject,  OnMusicOnClicked);
+        AddListener(musicOffObject, OnMusicOffClicked);
+        AddListener(soundOnObject,  OnSoundOnClicked);
+        AddListener(soundOffObject, OnSoundOffClicked);
     }
 
-    private void UpdateMusicUI(bool isEnabled)
+    private static void AddListener(GameObject go, UnityEngine.Events.UnityAction action)
     {
-        if (musicOnObject != null)
-            musicOnObject.SetActive(isEnabled);
-
-        if (musicOffObject != null)
-            musicOffObject.SetActive(!isEnabled);
+        if (go == null) return;
+        Button btn = go.GetComponent<Button>();
+        if (btn == null) return;
+        btn.onClick.RemoveListener(action);
+        btn.onClick.AddListener(action);
     }
 
-    private void UpdateSoundUI(bool isEnabled)
-    {
-        if (soundOnObject != null)
-            soundOnObject.SetActive(isEnabled);
+    // ---------------------------------------------------------------
+    // UI Refresh
+    // ---------------------------------------------------------------
 
-        if (soundOffObject != null)
-            soundOffObject.SetActive(!isEnabled);
+    private IEnumerator RefreshNextFrame()
+    {
+        yield return null;   // wait one frame
+        ForceRefreshUI();
     }
 
-    private void HandleMusicStateChanged(bool isEnabled)
+    public void ForceRefreshUI()
     {
-        UpdateMusicUI(isEnabled);
+        bool music = GetMusicEnabled();
+        bool sound = GetSoundEnabled();
+        _lastMusicState = music;
+        _lastSoundState = sound;
+        ApplyUIState(music, sound);
     }
 
-    private void HandleSoundStateChanged(bool isEnabled)
+    private void ApplyUIState(bool musicEnabled, bool soundEnabled)
     {
-        UpdateSoundUI(isEnabled);
+        SetActive(musicOnObject,  musicEnabled);
+        SetActive(musicOffObject, !musicEnabled);
+        SetActive(soundOnObject,  soundEnabled);
+        SetActive(soundOffObject, !soundEnabled);
     }
 
-    // --- Button Click Handlers ---
+    private static void SetActive(GameObject go, bool active)
+    {
+        if (go != null && go.activeSelf != active)
+            go.SetActive(active);
+    }
+
+    // ---------------------------------------------------------------
+    // State Helpers
+    // ---------------------------------------------------------------
+
+    private static bool GetMusicEnabled()
+    {
+        if (AudioManager.Instance != null)
+            return AudioManager.Instance.IsMusicEnabled();
+        return PlayerPrefs.GetInt("MusicEnabled", 1) == 1;
+    }
+
+    private static bool GetSoundEnabled()
+    {
+        if (AudioManager.Instance != null)
+            return AudioManager.Instance.IsSoundEnabled();
+        return PlayerPrefs.GetInt("SoundEnabled", 1) == 1;
+    }
+
+    // ---------------------------------------------------------------
+    // Button Click Handlers (call from Inspector OR via code)
+    // ---------------------------------------------------------------
+
+    /// <summary>Music is ON → turn it OFF.</summary>
     public void OnMusicOnClicked()
     {
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayButtonClick();
             AudioManager.Instance.SetMusicEnabled(false);
+            AudioManager.Instance.PlayButtonClick();
         }
         else
         {
             PlayerPrefs.SetInt("MusicEnabled", 0);
-            UpdateUI();
+            PlayerPrefs.Save();
         }
+        ForceRefreshUI();
     }
 
+    /// <summary>Music is OFF → turn it ON.</summary>
     public void OnMusicOffClicked()
     {
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayButtonClick();
             AudioManager.Instance.SetMusicEnabled(true);
+            AudioManager.Instance.PlayButtonClick();
         }
         else
         {
             PlayerPrefs.SetInt("MusicEnabled", 1);
-            UpdateUI();
+            PlayerPrefs.Save();
         }
+        ForceRefreshUI();
     }
 
+    /// <summary>Sound is ON → turn it OFF.</summary>
     public void OnSoundOnClicked()
     {
         if (AudioManager.Instance != null)
         {
-            AudioManager.Instance.PlayButtonClick();
             AudioManager.Instance.SetSoundEnabled(false);
+            AudioManager.Instance.PlayButtonClick();
         }
         else
         {
             PlayerPrefs.SetInt("SoundEnabled", 0);
-            UpdateUI();
+            PlayerPrefs.Save();
         }
+        ForceRefreshUI();
     }
 
+    /// <summary>Sound is OFF → turn it ON.</summary>
     public void OnSoundOffClicked()
     {
         if (AudioManager.Instance != null)
@@ -179,25 +208,21 @@ public class SettingsUIController : MonoBehaviour
         else
         {
             PlayerPrefs.SetInt("SoundEnabled", 1);
-            UpdateUI();
+            PlayerPrefs.Save();
         }
+        ForceRefreshUI();
     }
 
+    // Convenience single-button toggles
     public void ToggleMusic()
     {
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlayButtonClick();
-            AudioManager.Instance.ToggleMusic();
-        }
+        if (GetMusicEnabled()) OnMusicOnClicked();
+        else                   OnMusicOffClicked();
     }
 
     public void ToggleSound()
     {
-        if (AudioManager.Instance != null)
-        {
-            AudioManager.Instance.PlayButtonClick();
-            AudioManager.Instance.ToggleSound();
-        }
+        if (GetSoundEnabled()) OnSoundOnClicked();
+        else                   OnSoundOffClicked();
     }
 }

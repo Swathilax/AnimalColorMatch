@@ -22,6 +22,20 @@ public class GameSceneManager : MonoBehaviour
         SceneManager.LoadScene("HomeScreen");
     }
 
+    public void RestartLevel()
+    {
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayButtonClick();
+
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public void Retry()
+    {
+        RestartLevel();
+    }
+
     public void QuitGame()
     {
         if (AudioManager.Instance != null)
