@@ -204,9 +204,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1991279}
-        m_TargetAssemblyTypeName: ClickController, Assembly-CSharp
-        m_MethodName: OnButtonClicked
+      - m_Target: {fileID: 1991280}
+        m_TargetAssemblyTypeName: ColorAnswerButton, Assembly-CSharp
+        m_MethodName: OnColorButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1551,9 +1551,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 719256078}
-        m_TargetAssemblyTypeName: ClickController, Assembly-CSharp
-        m_MethodName: OnButtonClicked
+      - m_Target: {fileID: 719256079}
+        m_TargetAssemblyTypeName: ColorAnswerButton, Assembly-CSharp
+        m_MethodName: OnColorButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1770,9 +1770,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 898710855}
-        m_TargetAssemblyTypeName: ClickController, Assembly-CSharp
-        m_MethodName: OnButtonClicked
+      - m_Target: {fileID: 898710856}
+        m_TargetAssemblyTypeName: ColorAnswerButton, Assembly-CSharp
+        m_MethodName: OnColorButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2068,9 +2068,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1325886926}
-        m_TargetAssemblyTypeName: ClickController, Assembly-CSharp
-        m_MethodName: OnButtonClicked
+      - m_Target: {fileID: 1325886927}
+        m_TargetAssemblyTypeName: ColorAnswerButton, Assembly-CSharp
+        m_MethodName: OnColorButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3125,11 +3125,14 @@ MonoBehaviour:
   livesText: {fileID: 301653006}
   levelCompletedPanel: {fileID: 549776610}
   levelFailedPanel: {fileID: 1859653587}
+  pausePanel: {fileID: 0}
   answerButtons:
   - {fileID: 1991275}
   - {fileID: 1325886922}
   - {fileID: 719256072}
   - {fileID: 898710851}
+  pauseButton: {fileID: 0}
+  resumeButton: {fileID: 0}
 --- !u!4 &1937551882
 Transform:
   m_ObjectHideFlags: 0

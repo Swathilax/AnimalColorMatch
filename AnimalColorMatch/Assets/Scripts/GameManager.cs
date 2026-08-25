@@ -29,9 +29,14 @@ public class GameManager : MonoBehaviour
     [Header("Panels")]
     public GameObject levelCompletedPanel;
     public GameObject levelFailedPanel;
+    public GameObject pausePanel;
 
     [Header("Answer Buttons")]
     public Button[] answerButtons;
+
+    [Header("Pause Controls")]
+    public Button pauseButton;
+    public Button resumeButton;
 
     private Sprite currentSprite;
     private string currentCorrectColor;
@@ -43,16 +48,133 @@ public class GameManager : MonoBehaviour
     private float questionTimer;
 
     private bool gameRunning;
+    private bool isPaused;
     private bool questionAnswered;
+    private Coroutine popCoroutine;
+
+    private void Awake()
+    {
+        SetupButtonListeners();
+        SetupPauseAndMenuButtons();
+    }
 
     private void Start()
     {
         StartLevel();
     }
 
+    private void SetupPauseAndMenuButtons()
+    {
+        if (pausePanel == null)
+        {
+            GameObject pauseObj = GameObject.Find("Pause");
+            if (pauseObj != null)
+            {
+                pausePanel = pauseObj;
+            }
+            else
+            {
+                Transform[] allTransforms = Resources.FindObjectsOfTypeAll<Transform>();
+                foreach (Transform t in allTransforms)
+                {
+                    if (t.gameObject.name == "Pause" && t.GetComponent<RectTransform>() != null)
+                    {
+                        pausePanel = t.gameObject;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (pauseButton == null)
+        {
+            GameObject pBtn = GameObject.Find("Pause Btn");
+            if (pBtn != null)
+                pauseButton = pBtn.GetComponent<Button>();
+        }
+
+        if (pauseButton != null)
+        {
+            pauseButton.onClick.RemoveListener(PauseGame);
+            pauseButton.onClick.AddListener(PauseGame);
+        }
+
+        if (resumeButton == null && pausePanel != null)
+        {
+            Button[] panelButtons = pausePanel.GetComponentsInChildren<Button>(true);
+            foreach (Button b in panelButtons)
+            {
+                if (b.gameObject.name.ToLower().Contains("resume"))
+                {
+                    resumeButton = b;
+                    break;
+                }
+            }
+        }
+
+        if (resumeButton != null)
+        {
+            resumeButton.onClick.RemoveListener(ResumeGame);
+            resumeButton.onClick.AddListener(ResumeGame);
+        }
+    }
+
+    private void SetupButtonListeners()
+    {
+        if (answerButtons == null || answerButtons.Length == 0)
+        {
+            // Auto find buttons if not assigned
+            Button[] foundButtons = GetComponentsInChildren<Button>(true);
+            if (foundButtons != null && foundButtons.Length > 0)
+            {
+                answerButtons = foundButtons;
+            }
+        }
+
+        if (answerButtons != null)
+        {
+            foreach (Button btn in answerButtons)
+            {
+                if (btn == null) continue;
+
+                string col = GetColorForButton(btn);
+                if (!string.IsNullOrEmpty(col))
+                {
+                    btn.onClick.AddListener(() => CheckAnswer(col));
+                }
+            }
+        }
+    }
+
+    private string GetColorForButton(Button btn)
+    {
+        ColorAnswerButton colorBtn = btn.GetComponent<ColorAnswerButton>();
+        if (colorBtn != null && !string.IsNullOrEmpty(colorBtn.buttonColor))
+            return NormalizeColor(colorBtn.buttonColor);
+
+        string name = btn.gameObject.name.ToLower();
+        if (name.Contains("red")) return "Red";
+        if (name.Contains("blue")) return "Blue";
+        if (name.Contains("yellow")) return "Yellow";
+        if (name.Contains("green")) return "Green";
+
+        return "";
+    }
+
+    public string NormalizeColor(string color)
+    {
+        if (string.IsNullOrEmpty(color)) return "";
+        string c = color.Trim().ToLower();
+        if (c.Contains("red")) return "Red";
+        if (c.Contains("blue")) return "Blue";
+        if (c.Contains("yellow")) return "Yellow";
+        if (c.Contains("green")) return "Green";
+        return color.Trim();
+    }
+
     private void Update()
     {
-        if (!gameRunning)
+        if (!gameRunning || isPaused)
             return;
 
         levelTimer -= Time.deltaTime;
@@ -71,6 +193,10 @@ public class GameManager : MonoBehaviour
     public void StartLevel()
     {
         StopAllCoroutines();
+        popCoroutine = null;
+
+        Time.timeScale = 1f;
+        isPaused = false;
 
         correctAnswers = 0;
         lives = startingLives;
@@ -80,6 +206,9 @@ public class GameManager : MonoBehaviour
 
         gameRunning = true;
         questionAnswered = false;
+
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
 
         if (levelCompletedPanel != null)
             levelCompletedPanel.SetActive(false);
@@ -99,6 +228,46 @@ public class GameManager : MonoBehaviour
         StartCoroutine(QuestionLoop());
     }
 
+    public void PauseGame()
+    {
+        if (!gameRunning || isPaused)
+            return;
+
+        isPaused = true;
+        Time.timeScale = 0f;
+
+        if (pausePanel != null)
+            pausePanel.SetActive(true);
+
+        SetAnswerButtons(false);
+
+        Debug.Log("Game Paused");
+    }
+
+    public void ResumeGame()
+    {
+        if (!gameRunning || !isPaused)
+            return;
+
+        isPaused = false;
+        Time.timeScale = 1f;
+
+        if (pausePanel != null)
+            pausePanel.SetActive(false);
+
+        SetAnswerButtons(true);
+
+        Debug.Log("Game Resumed");
+    }
+
+    public void TogglePause()
+    {
+        if (isPaused)
+            ResumeGame();
+        else
+            PauseGame();
+    }
+
     private IEnumerator QuestionLoop()
     {
         while (gameRunning)
@@ -108,115 +277,137 @@ public class GameManager : MonoBehaviour
             questionAnswered = false;
             questionTimer = questionDuration;
 
-            while (
-                questionTimer > 0f &&
-                !questionAnswered &&
-                gameRunning
-            )
+            // Wait for the 5-second interval while the game is running
+            while (questionTimer > 0f && gameRunning)
             {
-                questionTimer -= Time.deltaTime;
+                if (!isPaused)
+                {
+                    questionTimer -= Time.deltaTime;
+                }
                 yield return null;
             }
 
             if (!gameRunning)
                 yield break;
 
+            // If the user did not answer during the 5-second interval, they lose a life
             if (!questionAnswered)
             {
+                Debug.Log("Time up! No color selected within 5 seconds.");
                 LoseLife();
+                AnimatePopOut();
 
                 if (!gameRunning)
                     yield break;
             }
-
-            yield return null;
         }
     }
 
     private void SpawnRandomQuestion()
-{
-    Sprite[] sprites =
     {
-        redBear,
-        blueBear,
-        yellowBear,
-        greenBear
-    };
+        Sprite[] sprites =
+        {
+            redBear,
+            blueBear,
+            yellowBear,
+            greenBear
+        };
 
-    int randomSpriteIndex = Random.Range(0, sprites.Length);
+        int randomSpriteIndex = Random.Range(0, sprites.Length);
+        currentSprite = sprites[randomSpriteIndex];
 
-    currentSprite = sprites[randomSpriteIndex];
+        switch (randomSpriteIndex)
+        {
+            case 0:
+                currentCorrectColor = "Red";
+                break;
+            case 1:
+                currentCorrectColor = "Blue";
+                break;
+            case 2:
+                currentCorrectColor = "Yellow";
+                break;
+            case 3:
+                currentCorrectColor = "Green";
+                break;
+        }
 
-    switch (randomSpriteIndex)
-    {
-        case 0:
-            currentCorrectColor = "Red";
-            break;
+        if (spawnPoints == null || spawnPoints.Length == 0 || questionImage == null)
+            return;
 
-        case 1:
-            currentCorrectColor = "Blue";
-            break;
+        int randomSpawnIndex = Random.Range(0, spawnPoints.Length);
 
-        case 2:
-            currentCorrectColor = "Yellow";
-            break;
+        questionImage.transform.position = spawnPoints[randomSpawnIndex].position;
+        questionImage.sprite = currentSprite;
+        questionImage.transform.localScale = Vector3.zero;
 
-        case 3:
-            currentCorrectColor = "Green";
-            break;
+        AnimatePopIn();
+
+        Debug.Log(
+            "Spawned at: " +
+            spawnPoints[randomSpawnIndex].name +
+            " | Answer: " +
+            currentCorrectColor
+        );
     }
 
-    if (spawnPoints == null || spawnPoints.Length == 0)
-        return;
+    private void AnimatePopIn()
+    {
+        if (popCoroutine != null)
+            StopCoroutine(popCoroutine);
 
-    int randomSpawnIndex = Random.Range(0, spawnPoints.Length);
+        popCoroutine = StartCoroutine(PopInQuestion());
+    }
 
-    questionImage.transform.position =
-        spawnPoints[randomSpawnIndex].position;
+    private void AnimatePopOut()
+    {
+        if (popCoroutine != null)
+            StopCoroutine(popCoroutine);
 
-    questionImage.sprite = currentSprite;
-
-    questionImage.transform.localScale = Vector3.zero;
-
-    StartCoroutine(PopInQuestion());
-
-    Debug.Log(
-        "Spawned at: " +
-        spawnPoints[randomSpawnIndex].name +
-        " | Answer: " +
-        currentCorrectColor
-    );
-}
+        popCoroutine = StartCoroutine(PopOutQuestion());
+    }
 
     private IEnumerator PopInQuestion()
     {
         if (questionImage == null)
             yield break;
 
+        questionImage.gameObject.SetActive(true);
+
         float duration = 0.3f;
         float timer = 0f;
-
         Vector3 targetScale = Vector3.one;
 
         while (timer < duration)
         {
             timer += Time.deltaTime;
-
-            float t = timer / duration;
-
-            t = Mathf.SmoothStep(0f, 1f, t);
-
-            questionImage.transform.localScale =
-                Vector3.Lerp(
-                    Vector3.zero,
-                    targetScale,
-                    t
-                );
-
+            float t = Mathf.SmoothStep(0f, 1f, timer / duration);
+            questionImage.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, t);
             yield return null;
         }
 
         questionImage.transform.localScale = targetScale;
+    }
+
+    private IEnumerator PopOutQuestion()
+    {
+        if (questionImage == null)
+            yield break;
+
+        float duration = 0.25f;
+        float timer = 0f;
+        Vector3 startScale = questionImage.transform.localScale;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float t = Mathf.SmoothStep(0f, 1f, timer / duration);
+            questionImage.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
+            yield return null;
+        }
+
+        questionImage.transform.localScale = Vector3.zero;
+        questionImage.gameObject.SetActive(false);
     }
 
     public void CheckAnswer(string selectedColor)
@@ -229,16 +420,21 @@ public class GameManager : MonoBehaviour
 
         questionAnswered = true;
 
-        if (selectedColor == currentCorrectColor)
+        string normalizedSelected = NormalizeColor(selectedColor);
+        string normalizedCorrect = NormalizeColor(currentCorrectColor);
+
+        if (normalizedSelected == normalizedCorrect)
         {
             correctAnswers++;
 
             Debug.Log(
-                "CORRECT! " +
+                "CORRECT! Selected: " +
                 selectedColor +
                 " | Correct Answers: " +
                 correctAnswers
             );
+
+            AnimatePopOut();
 
             if (correctAnswers >= requiredCorrectAnswers)
                 LevelComplete();
@@ -253,6 +449,7 @@ public class GameManager : MonoBehaviour
             );
 
             LoseLife();
+            AnimatePopOut();
         }
     }
 
