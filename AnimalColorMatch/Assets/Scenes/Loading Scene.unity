@@ -153,7 +153,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 5, y: 0}
+  m_AnchoredPosition: {x: 5.000001, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &20198245
@@ -219,7 +219,7 @@ RectTransform:
   m_GameObject: {fileID: 69777218}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1.5799, z: 1}
+  m_LocalScale: {x: 1, y: 1.5799003, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 20198244}
@@ -227,7 +227,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.25}
   m_AnchorMax: {x: 1, y: 0.75}
-  m_AnchoredPosition: {x: -5, y: 0}
+  m_AnchoredPosition: {x: -4.999995, y: 0}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &82139348
@@ -411,7 +411,7 @@ RectTransform:
   m_GameObject: {fileID: 559378520}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 6, y: 3, z: 3}
+  m_LocalScale: {x: 4.3024797, y: 2.1512399, z: 2.1512399}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 796216734}
@@ -441,7 +441,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 8838907546641552792, guid: bd43612711c32e842bff43bebb6306de, type: 3}
+  m_Sprite: {fileID: 21300000, guid: bd43612711c32e842bff43bebb6306de, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -516,7 +516,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 9169877530624898698, guid: 634656279689d3541b6bb1c56bf7228b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 634656279689d3541b6bb1c56bf7228b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -762,7 +762,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.000030517578}
   m_SizeDelta: {x: -20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1717751598
@@ -884,8 +884,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b896c711c788b10478d57da4f3db8d27, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoadingScreenManager
-  loadingScreen: {fileID: 796216730}
-  progressBar: {fileID: 1717751600}
 --- !u!4 &2075339544
 Transform:
   m_ObjectHideFlags: 0

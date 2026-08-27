@@ -62,11 +62,6 @@ public class AudioManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    /// <summary>
-    /// Called every time a new scene finishes loading.
-    /// Actively refreshes all SettingsUIControllers — including inactive ones.
-    /// This is the reliable fix for Settings UI breaking after returning from Gameplay.
-    /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         ApplyMusicSettings();
@@ -75,8 +70,6 @@ public class AudioManager : MonoBehaviour
         OnMusicStateChanged?.Invoke(isMusicEnabled);
         OnSoundStateChanged?.Invoke(isSoundEnabled);
 
-        // Wait one frame then force-refresh all SettingsUIControllers in the scene,
-        // including those on inactive GameObjects (parent panels that are hidden).
         StartCoroutine(RefreshSettingsUINextFrame());
     }
 
@@ -129,7 +122,6 @@ public class AudioManager : MonoBehaviour
 
     private void LoadSettings()
     {
-        // Default to enabled (1) if not previously set
         isMusicEnabled = PlayerPrefs.GetInt(PREFS_MUSIC_KEY, 1) == 1;
         isSoundEnabled = PlayerPrefs.GetInt(PREFS_SOUND_KEY, 1) == 1;
 
@@ -154,7 +146,6 @@ public class AudioManager : MonoBehaviour
         }
         else
         {
-            // Stop completely — more reliable than mute across scene changes
             bgmSource.Stop();
         }
     }
@@ -168,7 +159,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // --- Music Controls ---
     public void PlayBGM(AudioClip clip = null)
     {
         if (clip != null)
@@ -211,8 +201,6 @@ public class AudioManager : MonoBehaviour
             bgmSource.UnPause();
         }
     }
-
-    // --- SFX Controls ---
     public void PlaySFX(AudioClip clip, float volumeScale = 1f)
     {
         if (clip == null || !isSoundEnabled || sfxSource == null) return;
@@ -260,7 +248,6 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    // --- Toggle & State Management ---
     public void SetMusicEnabled(bool enabled)
     {
         isMusicEnabled = enabled;
@@ -293,11 +280,6 @@ public class AudioManager : MonoBehaviour
         SetSoundEnabled(!isSoundEnabled);
     }
 
-    /// <summary>
-    /// Finds every AudioToggleButton in the scene (including inactive siblings)
-    /// and syncs their visibility to the current audio state.
-    /// This is what makes the partner button appear when you click the other one.
-    /// </summary>
     private void SyncAllToggleButtons()
     {
 #if UNITY_2023_1_OR_NEWER

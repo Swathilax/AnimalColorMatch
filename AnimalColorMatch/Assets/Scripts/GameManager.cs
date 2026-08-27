@@ -19,13 +19,20 @@ public class GameManager : MonoBehaviour
     public Image questionImage;
 
     [Header("Game Settings")]
-    public float levelDuration = 60f;
+    public float levelDuration = 30f;
     public float questionDuration = 5f;
+    public int totalQuestions = 10;
     public int startingLives = 3;
-    public int requiredCorrectAnswers = 7;
+
+    [Header("Timer UI")]
+    public TMP_Text timerText;
 
     [Header("Lives UI")]
     public TMP_Text livesText;
+
+    [Header("Coins")]
+    public int coinsPerCorrectAnswer = 10;
+    public TMP_Text coinsText;
 
     [Header("Panels")]
     public GameObject levelCompletedPanel;
@@ -47,6 +54,9 @@ public class GameManager : MonoBehaviour
 
     private int correctAnswers;
     private int lives;
+    private int currentQuestion;
+
+    private int coins;
 
     private float levelTimer;
     private float questionTimer;
@@ -56,6 +66,9 @@ public class GameManager : MonoBehaviour
     private bool questionAnswered;
     private Coroutine popCoroutine;
 
+    private const string COINS_KEY = "PlayerCoins";
+
+
     private void Awake()
     {
         SetupButtonListeners();
@@ -64,6 +77,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        coins = PlayerPrefs.GetInt(COINS_KEY, 0);
+
+        UpdateCoinsUI();
+
         StartLevel();
     }
 
@@ -134,10 +151,7 @@ public class GameManager : MonoBehaviour
             resumeButton.onClick.AddListener(ResumeGame);
         }
 
-        // Auto find any unassigned popup buttons in panels
         AutoFindPanelButtons();
-
-        // Register click listeners for all buttons in the lists
         RegisterButtonList(restartButtons, RetryLevel);
         RegisterButtonList(homeButtons, GoHome);
         RegisterButtonList(nextLevelButtons, NextLevel);
@@ -187,7 +201,6 @@ public class GameManager : MonoBehaviour
     {
         if (answerButtons == null || answerButtons.Length == 0)
         {
-            // Auto find buttons if not assigned
             Button[] foundButtons = GetComponentsInChildren<Button>(true);
             if (foundButtons != null && foundButtons.Length > 0)
             {
@@ -238,16 +251,27 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (!gameRunning || isPaused)
+        if (!gameRunning)
             return;
 
         levelTimer -= Time.deltaTime;
 
+        // Update timer UI
+        if (timerText != null)
+        {
+            timerText.text = Mathf.CeilToInt(levelTimer).ToString();
+        }
+
+        // Time is over
         if (levelTimer <= 0f)
         {
             levelTimer = 0f;
 
-            if (correctAnswers >= requiredCorrectAnswers)
+            if (timerText != null)
+                timerText.text = "0";
+
+            // If all questions are completed
+            if (currentQuestion >= totalQuestions)
                 LevelComplete();
             else
                 LevelFailed();
@@ -264,6 +288,12 @@ public class GameManager : MonoBehaviour
 
         correctAnswers = 0;
         lives = startingLives;
+
+        correctAnswers = 0;
+        lives = startingLives;
+        currentQuestion = 0;
+
+        UpdateCoinsUI();
 
         levelTimer = levelDuration;
         questionTimer = questionDuration;
@@ -342,39 +372,59 @@ public class GameManager : MonoBehaviour
     {
         while (gameRunning)
         {
+            questionAnswered = false;
+
             SpawnRandomQuestion();
 
-            questionAnswered = false;
             questionTimer = questionDuration;
 
-            // Wait for the 5-second interval while the game is running
-            while (questionTimer > 0f && gameRunning)
+            while (
+                questionTimer > 0f &&
+                !questionAnswered &&
+                gameRunning
+            )
             {
                 if (!isPaused)
-                {
                     questionTimer -= Time.deltaTime;
-                }
+
                 yield return null;
             }
 
             if (!gameRunning)
                 yield break;
 
-            // If the user did not answer during the 5-second interval, they lose a life
             if (!questionAnswered)
             {
-                Debug.Log("Time up! No color selected within 5 seconds.");
+                questionAnswered = true;
+
+                Debug.Log("TIME UP");
+
                 LoseLife();
-                AnimatePopOut();
 
                 if (!gameRunning)
                     yield break;
+
+                AnimatePopOut();
             }
+
+            // Check if all questions are completed
+            if (currentQuestion >= totalQuestions)
+            {
+                LevelComplete();
+                yield break;
+            }
+
+            yield return new WaitForSeconds(1f);
+
+            if (!gameRunning)
+                yield break;
         }
     }
 
+
     private void SpawnRandomQuestion()
     {
+        currentQuestion++;
         Sprite[] sprites =
         {
             redBear,
@@ -509,8 +559,26 @@ public class GameManager : MonoBehaviour
 
             AnimatePopOut();
 
-            if (correctAnswers >= requiredCorrectAnswers)
-                LevelComplete();
+            if (selectedColor == currentCorrectColor)
+            {
+                correctAnswers++;
+
+                coins += coinsPerCorrectAnswer;
+
+                PlayerPrefs.SetInt(COINS_KEY, coins);
+                PlayerPrefs.Save();
+
+                UpdateCoinsUI();
+
+                Debug.Log(
+                    "CORRECT! " +
+                    selectedColor +
+                    " | Correct Answers: " +
+                    correctAnswers +
+                    " | Coins: " +
+                    coins
+                );
+            }
         }
         else
         {
@@ -527,6 +595,12 @@ public class GameManager : MonoBehaviour
             LoseLife();
             AnimatePopOut();
         }
+    }
+
+    private void UpdateCoinsUI()
+    {
+        if (coinsText != null)
+            coinsText.text = coins.ToString();
     }
 
     private void LoseLife()

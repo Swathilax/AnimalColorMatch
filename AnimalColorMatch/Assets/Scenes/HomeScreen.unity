@@ -921,7 +921,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: bb143b809a37a0744bfc1d02245ef39a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: ab88d43bf913ef2429e85372cc52a348, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2296,7 +2296,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioToggleButton
   toggleType: 1
-  partnerObject: {fileID: 845527203}
 --- !u!1 &987858466
 GameObject:
   m_ObjectHideFlags: 0
@@ -2739,7 +2738,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioToggleButton
   toggleType: 0
-  partnerObject: {fileID: 1175690896}
 --- !u!1 &1249154467
 GameObject:
   m_ObjectHideFlags: 0
@@ -3232,7 +3230,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioToggleButton
   toggleType: 2
-  partnerObject: {fileID: 1501696128}
 --- !u!1 &1540519892
 GameObject:
   m_ObjectHideFlags: 0
@@ -4271,7 +4268,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AudioToggleButton
   toggleType: 3
-  partnerObject: {fileID: 1675573495}
 --- !u!1 &1725413045
 GameObject:
   m_ObjectHideFlags: 0
@@ -4970,7 +4966,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1916012785}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1554258913}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 1
+        m_CallState: 2
 --- !u!114 &1916012785
 MonoBehaviour:
   m_ObjectHideFlags: 0
