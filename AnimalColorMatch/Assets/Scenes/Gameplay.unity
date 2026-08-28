@@ -3492,6 +3492,22 @@ MonoBehaviour:
   blueBear: {fileID: 21300000, guid: 258f864b15603d448aca8a3d1a3ff596, type: 3}
   yellowBear: {fileID: 21300000, guid: f526c0bdd92ad7142884d08809b8f041, type: 3}
   greenBear: {fileID: 21300000, guid: 0e729f1ef378bdf4da3986390b619121, type: 3}
+  redFox: {fileID: -1047501356974956610, guid: 7e1d543288b1386469684bdacbebe0b9, type: 3}
+  blueFox: {fileID: -2610619413908146584, guid: 4e8181130ae6f8f4ab0ade5f6cedbe87, type: 3}
+  yellowFox: {fileID: 2439250153873117544, guid: 04b23462204c0444f9958ab65900e84b, type: 3}
+  greenFox: {fileID: 7987927413287304957, guid: 180c0a9f27021574fa03f699897fc00b, type: 3}
+  redElephant: {fileID: -8126973422966342594, guid: 65aaf8196097ff3459ddba6c0715becc, type: 3}
+  blueElephant: {fileID: -3064108548492797693, guid: 5ab752f2479e6b343b5b9a54bc33e6ed, type: 3}
+  yellowElephant: {fileID: -1285457600981228809, guid: c1c3c1c9e5fd1854c8850140ddc5b6b6, type: 3}
+  greenElephant: {fileID: -212194212838815874, guid: 15122fac085a3e14db3474614d7bcbab, type: 3}
+  redTiger: {fileID: -3295003891706223068, guid: d7dd58704c2e60d4dae8e2ce3b4c45f5, type: 3}
+  blueTiger: {fileID: 7192531934961917761, guid: 7c1e386d9b3269c43a26d309caadde33, type: 3}
+  yellowTiger: {fileID: 0}
+  greenTiger: {fileID: 5793569140710929950, guid: d3cf545178e0fdf49a5bdd933e6b2345, type: 3}
+  redLion: {fileID: -4165842176395145960, guid: e48ba61ad5fe2aa4a9d8908c42b6da11, type: 3}
+  blueLion: {fileID: 3343414977497544406, guid: f3b39183cce55e84496ade47e2579ec3, type: 3}
+  yellowLion: {fileID: -851555674935921517, guid: 9279b0beea72fa046b138f84239f7f54, type: 3}
+  greenLion: {fileID: -5483758779132411799, guid: 66a19d6cb32c3a84e9b43667189b1832, type: 3}
   spawnPoints:
   - {fileID: 358064505}
   - {fileID: 596141198}

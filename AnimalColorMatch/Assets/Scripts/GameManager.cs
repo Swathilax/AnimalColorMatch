@@ -6,11 +6,35 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Question Sprites")]
+    [Header("Question Sprites - Bear")]
     public Sprite redBear;
     public Sprite blueBear;
     public Sprite yellowBear;
     public Sprite greenBear;
+
+    [Header("Question Sprites - Fox")]
+    public Sprite redFox;
+    public Sprite blueFox;
+    public Sprite yellowFox;
+    public Sprite greenFox;
+
+    [Header("Question Sprites - Elephant")]
+    public Sprite redElephant;
+    public Sprite blueElephant;
+    public Sprite yellowElephant;
+    public Sprite greenElephant;
+
+    [Header("Question Sprites - Tiger")]
+    public Sprite redTiger;
+    public Sprite blueTiger;
+    public Sprite yellowTiger;
+    public Sprite greenTiger;
+
+    [Header("Question Sprites - Lion")]
+    public Sprite redLion;
+    public Sprite blueLion;
+    public Sprite yellowLion;
+    public Sprite greenLion;
 
     [Header("Spawn Points")]
     public Transform[] spawnPoints;
@@ -51,6 +75,8 @@ public class GameManager : MonoBehaviour
 
     private Sprite currentSprite;
     private string currentCorrectColor;
+    private string currentAnimalName = AnimalShopManager.ANIMAL_BEAR;
+    private bool isCurrentAnimalTarget = true;
 
     private int correctAnswers;
     private int lives;
@@ -65,6 +91,7 @@ public class GameManager : MonoBehaviour
     private bool isPaused;
     private bool questionAnswered;
     private Coroutine popCoroutine;
+    private Dictionary<string, Sprite> _cachedSprites;
 
     private const string COINS_KEY = "PlayerCoins";
 
@@ -77,7 +104,16 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        coins = PlayerPrefs.GetInt(COINS_KEY, 0);
+        if (CoinManager.Instance != null)
+        {
+            coins = CoinManager.Instance.Coins;
+            if (coinsText != null)
+                CoinManager.Instance.RegisterCoinText(coinsText);
+        }
+        else
+        {
+            coins = PlayerPrefs.GetInt(COINS_KEY, 0);
+        }
 
         UpdateCoinsUI();
 
@@ -256,13 +292,11 @@ public class GameManager : MonoBehaviour
 
         levelTimer -= Time.deltaTime;
 
-        // Update timer UI
         if (timerText != null)
         {
             timerText.text = Mathf.CeilToInt(levelTimer).ToString();
         }
 
-        // Time is over
         if (levelTimer <= 0f)
         {
             levelTimer = 0f;
@@ -270,7 +304,6 @@ public class GameManager : MonoBehaviour
             if (timerText != null)
                 timerText.text = "0";
 
-            // If all questions are completed
             if (currentQuestion >= totalQuestions)
                 LevelComplete();
             else
@@ -288,10 +321,12 @@ public class GameManager : MonoBehaviour
 
         correctAnswers = 0;
         lives = startingLives;
-
-        correctAnswers = 0;
-        lives = startingLives;
         currentQuestion = 0;
+
+        if (CoinManager.Instance != null)
+            coins = CoinManager.Instance.Coins;
+        else
+            coins = PlayerPrefs.GetInt(COINS_KEY, 0);
 
         UpdateCoinsUI();
 
@@ -397,9 +432,15 @@ public class GameManager : MonoBehaviour
             {
                 questionAnswered = true;
 
-                Debug.Log("TIME UP");
-
-                LoseLife();
+                if (isCurrentAnimalTarget)
+                {
+                    Debug.Log("TIME UP on Target Animal (" + currentAnimalName + ")! Life lost.");
+                    LoseLife();
+                }
+                else
+                {
+                    Debug.Log("TIME UP on Danger/Previous Animal (" + currentAnimalName + ")! Correctly ignored, no life lost.");
+                }
 
                 if (!gameRunning)
                     yield break;
@@ -407,7 +448,6 @@ public class GameManager : MonoBehaviour
                 AnimatePopOut();
             }
 
-            // Check if all questions are completed
             if (currentQuestion >= totalQuestions)
             {
                 LevelComplete();
@@ -425,32 +465,25 @@ public class GameManager : MonoBehaviour
     private void SpawnRandomQuestion()
     {
         currentQuestion++;
-        Sprite[] sprites =
-        {
-            redBear,
-            blueBear,
-            yellowBear,
-            greenBear
-        };
 
-        int randomSpriteIndex = Random.Range(0, sprites.Length);
-        currentSprite = sprites[randomSpriteIndex];
+        string latestAnimal = AnimalShopManager.GetLatestUnlockedAnimal();
+        List<string> previousAnimals = AnimalShopManager.GetPreviousUnlockedAnimals();
 
-        switch (randomSpriteIndex)
+        if (previousAnimals.Count > 0 && Random.value < 0.45f)
         {
-            case 0:
-                currentCorrectColor = "Red";
-                break;
-            case 1:
-                currentCorrectColor = "Blue";
-                break;
-            case 2:
-                currentCorrectColor = "Yellow";
-                break;
-            case 3:
-                currentCorrectColor = "Green";
-                break;
+            currentAnimalName = previousAnimals[Random.Range(0, previousAnimals.Count)];
+            isCurrentAnimalTarget = false;
         }
+        else
+        {
+            currentAnimalName = latestAnimal;
+            isCurrentAnimalTarget = true;
+        }
+
+        string[] colors = { "Red", "Blue", "Yellow", "Green" };
+        currentCorrectColor = colors[Random.Range(0, colors.Length)];
+
+        currentSprite = GetAnimalSprite(currentAnimalName, currentCorrectColor);
 
         if (spawnPoints == null || spawnPoints.Length == 0 || questionImage == null)
             return;
@@ -458,17 +491,99 @@ public class GameManager : MonoBehaviour
         int randomSpawnIndex = Random.Range(0, spawnPoints.Length);
 
         questionImage.transform.position = spawnPoints[randomSpawnIndex].position;
-        questionImage.sprite = currentSprite;
+        if (currentSprite != null)
+        {
+            questionImage.sprite = currentSprite;
+        }
         questionImage.transform.localScale = Vector3.zero;
 
         AnimatePopIn();
 
         Debug.Log(
-            "Spawned at: " +
-            spawnPoints[randomSpawnIndex].name +
-            " | Answer: " +
-            currentCorrectColor
+            "Spawned: " + currentAnimalName +
+            " | Color: " + currentCorrectColor +
+            " | IsTarget: " + isCurrentAnimalTarget +
+            " | Spawn: " + spawnPoints[randomSpawnIndex].name
         );
+    }
+
+    private Sprite GetAnimalSprite(string animalName, string color)
+    {
+        string animal = AnimalShopManager.NormalizeAnimalName(animalName);
+        string c = NormalizeColor(color);
+
+        if (animal == AnimalShopManager.ANIMAL_BEAR)
+        {
+            if (c == "Red") return redBear != null ? redBear : FindSpriteByName("Red Bear");
+            if (c == "Blue") return blueBear != null ? blueBear : FindSpriteByName("Blue Bear");
+            if (c == "Yellow") return yellowBear != null ? yellowBear : FindSpriteByName("Yellow Bear");
+            if (c == "Green") return greenBear != null ? greenBear : (FindSpriteByName("Green Bear 1") ?? FindSpriteByName("Green Bear"));
+        }
+        else if (animal == AnimalShopManager.ANIMAL_FOX)
+        {
+            if (c == "Red") return redFox != null ? redFox : FindSpriteByName("Red Fox");
+            if (c == "Blue") return blueFox != null ? blueFox : FindSpriteByName("Blue Fox");
+            if (c == "Yellow") return yellowFox != null ? yellowFox : FindSpriteByName("Yellow Fox");
+            if (c == "Green") return greenFox != null ? greenFox : FindSpriteByName("Green Fox");
+        }
+        else if (animal == AnimalShopManager.ANIMAL_ELEPHANT)
+        {
+            if (c == "Red") return redElephant != null ? redElephant : FindSpriteByName("Red Elephant");
+            if (c == "Blue") return blueElephant != null ? blueElephant : FindSpriteByName("Blue Elephant");
+            if (c == "Yellow") return yellowElephant != null ? yellowElephant : FindSpriteByName("Yellow Elephant");
+            if (c == "Green") return greenElephant != null ? greenElephant : FindSpriteByName("Green Elephant");
+        }
+        else if (animal == AnimalShopManager.ANIMAL_TIGER)
+        {
+            if (c == "Red") return redTiger != null ? redTiger : FindSpriteByName("Red Tiger");
+            if (c == "Blue") return blueTiger != null ? blueTiger : FindSpriteByName("Blue Tiger");
+            if (c == "Yellow") return yellowTiger != null ? yellowTiger : FindSpriteByName("Yellow Tiger");
+            if (c == "Green") return greenTiger != null ? greenTiger : FindSpriteByName("Green Tiger");
+        }
+        else if (animal == AnimalShopManager.ANIMAL_LION)
+        {
+            if (c == "Red") return redLion != null ? redLion : FindSpriteByName("Red Lion");
+            if (c == "Blue") return blueLion != null ? blueLion : FindSpriteByName("Blue Lion");
+            if (c == "Yellow") return yellowLion != null ? yellowLion : FindSpriteByName("Yellow Lion");
+            if (c == "Green") return greenLion != null ? greenLion : FindSpriteByName("Green Lion");
+        }
+
+        return null;
+    }
+
+    private Sprite FindSpriteByName(string spriteName)
+    {
+        if (string.IsNullOrEmpty(spriteName))
+            return null;
+
+        if (_cachedSprites == null)
+        {
+            _cachedSprites = new Dictionary<string, Sprite>(System.StringComparer.OrdinalIgnoreCase);
+            Sprite[] allSprites = Resources.FindObjectsOfTypeAll<Sprite>();
+            foreach (Sprite s in allSprites)
+            {
+                if (s != null && !_cachedSprites.ContainsKey(s.name))
+                {
+                    _cachedSprites[s.name] = s;
+                }
+            }
+        }
+
+        if (_cachedSprites.TryGetValue(spriteName, out Sprite found))
+        {
+            return found;
+        }
+
+        string cleanTarget = spriteName.Replace(" ", "").ToLower();
+        foreach (var kvp in _cachedSprites)
+        {
+            if (kvp.Key.Replace(" ", "").ToLower().Equals(cleanTarget))
+            {
+                return kvp.Value;
+            }
+        }
+
+        return null;
     }
 
     private void AnimatePopIn()
@@ -540,6 +655,18 @@ public class GameManager : MonoBehaviour
 
         questionAnswered = true;
 
+        if (!isCurrentAnimalTarget)
+        {
+            Debug.Log("WRONG! Clicked button on Danger/Previous Animal (" + currentAnimalName + ")! Life lost.");
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayWrongAnswer();
+
+            LoseLife();
+            AnimatePopOut();
+            return;
+        }
+
         string normalizedSelected = NormalizeColor(selectedColor);
         string normalizedCorrect = NormalizeColor(currentCorrectColor);
 
@@ -550,35 +677,31 @@ public class GameManager : MonoBehaviour
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlayCorrectAnswer();
 
+            if (CoinManager.Instance != null)
+            {
+                CoinManager.Instance.AddCoins(coinsPerCorrectAnswer);
+                coins = CoinManager.Instance.Coins;
+            }
+            else
+            {
+                coins += coinsPerCorrectAnswer;
+                PlayerPrefs.SetInt(COINS_KEY, coins);
+                PlayerPrefs.Save();
+            }
+
+            UpdateCoinsUI();
+
             Debug.Log(
                 "CORRECT! Selected: " +
                 selectedColor +
+                " on " + currentAnimalName +
                 " | Correct Answers: " +
-                correctAnswers
+                correctAnswers +
+                " | Coins: " +
+                coins
             );
 
             AnimatePopOut();
-
-            if (selectedColor == currentCorrectColor)
-            {
-                correctAnswers++;
-
-                coins += coinsPerCorrectAnswer;
-
-                PlayerPrefs.SetInt(COINS_KEY, coins);
-                PlayerPrefs.Save();
-
-                UpdateCoinsUI();
-
-                Debug.Log(
-                    "CORRECT! " +
-                    selectedColor +
-                    " | Correct Answers: " +
-                    correctAnswers +
-                    " | Coins: " +
-                    coins
-                );
-            }
         }
         else
         {
@@ -586,8 +709,9 @@ public class GameManager : MonoBehaviour
                 AudioManager.Instance.PlayWrongAnswer();
 
             Debug.Log(
-                "WRONG! Selected: " +
+                "WRONG COLOR! Selected: " +
                 selectedColor +
+                " on " + currentAnimalName +
                 " | Correct: " +
                 currentCorrectColor
             );
@@ -599,6 +723,9 @@ public class GameManager : MonoBehaviour
 
     private void UpdateCoinsUI()
     {
+        if (CoinManager.Instance != null)
+            coins = CoinManager.Instance.Coins;
+
         if (coinsText != null)
             coinsText.text = coins.ToString();
     }
@@ -721,6 +848,16 @@ public class GameManager : MonoBehaviour
     public string GetCurrentCorrectColor()
     {
         return currentCorrectColor;
+    }
+
+    public string GetCurrentAnimalName()
+    {
+        return currentAnimalName;
+    }
+
+    public bool IsCurrentAnimalTarget()
+    {
+        return isCurrentAnimalTarget;
     }
 
     public void GoHome()
