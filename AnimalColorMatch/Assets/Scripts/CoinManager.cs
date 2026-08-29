@@ -92,6 +92,7 @@ public class CoinManager : MonoBehaviour
         UpdateCoinUI();
     }
 
+    [ContextMenu("Reset Coins to 0")]
     public void ResetCoins()
     {
         Coins = 0;

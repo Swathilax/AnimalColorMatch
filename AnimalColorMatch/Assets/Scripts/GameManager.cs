@@ -36,6 +36,12 @@ public class GameManager : MonoBehaviour
     public Sprite yellowLion;
     public Sprite greenLion;
 
+    [Header("Danger Spirit Sprites")]
+    public Sprite dangerBear;
+    public Sprite dangerFox;
+    public Sprite dangerElephant;
+    public Sprite dangerTiger;
+
     [Header("Spawn Points")]
     public Transform[] spawnPoints;
 
@@ -47,6 +53,16 @@ public class GameManager : MonoBehaviour
     public float questionDuration = 5f;
     public int totalQuestions = 10;
     public int startingLives = 3;
+
+    [Header("Animal Spawning Balance")]
+    [Tooltip("Minimum number of previous (danger) animal questions per level when previous animals exist")]
+    public int minPreviousAnimalSpawns = 2;
+    [Tooltip("Maximum number of previous (danger) animal questions per level when previous animals exist")]
+    public int maxPreviousAnimalSpawns = 3;
+    [Tooltip("Duration a previous/danger animal is displayed before disappearing automatically")]
+    public float dangerAnimalDuration = 3f;
+    [Tooltip("Transition delay between questions")]
+    public float transitionDelay = 0.6f;
 
     [Header("Timer UI")]
     public TMP_Text timerText;
@@ -62,6 +78,11 @@ public class GameManager : MonoBehaviour
     public GameObject levelCompletedPanel;
     public GameObject levelFailedPanel;
     public GameObject pausePanel;
+
+    [Header("Confetti Effect")]
+    public ParticleSystem confettiParticleSystem;
+    public ParticleSystem confettiParticleSystem2;
+    public GameObject confettiPrefab;
 
     [Header("Answer Buttons")]
     public Button[] answerButtons;
@@ -92,14 +113,19 @@ public class GameManager : MonoBehaviour
     private bool questionAnswered;
     private Coroutine popCoroutine;
     private Dictionary<string, Sprite> _cachedSprites;
+    private List<bool> _questionIsTargetPlan = new List<bool>();
+    private Vector3 _currentSpawnPointPosition;
 
     private const string COINS_KEY = "PlayerCoins";
 
 
     private void Awake()
     {
+        EnsureCanvasAndCameraSetup();
         SetupButtonListeners();
         SetupPauseAndMenuButtons();
+        AutoFindConfetti();
+        StopConfetti();
     }
 
     private void Start()
@@ -315,6 +341,7 @@ public class GameManager : MonoBehaviour
     {
         StopAllCoroutines();
         popCoroutine = null;
+        StopConfetti();
 
         Time.timeScale = 1f;
         isPaused = false;
@@ -330,11 +357,16 @@ public class GameManager : MonoBehaviour
 
         UpdateCoinsUI();
 
+        if (levelDuration <= 0f)
+            levelDuration = 30f;
+
         levelTimer = levelDuration;
         questionTimer = questionDuration;
 
         gameRunning = true;
         questionAnswered = false;
+
+        GenerateQuestionPlan();
 
         if (pausePanel != null)
             pausePanel.SetActive(false);
@@ -355,6 +387,88 @@ public class GameManager : MonoBehaviour
         UpdateLivesUI();
 
         StartCoroutine(QuestionLoop());
+    }
+
+    private void GenerateQuestionPlan()
+    {
+        _questionIsTargetPlan.Clear();
+        for (int i = 0; i < totalQuestions; i++)
+        {
+            _questionIsTargetPlan.Add(true);
+        }
+
+        List<string> previousAnimals = AnimalShopManager.GetPreviousUnlockedAnimals();
+        if (previousAnimals == null || previousAnimals.Count == 0 || totalQuestions <= 2)
+        {
+            Debug.Log("[GameManager] Generated Question Plan: Active Target Animal only (" + AnimalShopManager.GetLatestUnlockedAnimal() + "), no previous danger spirits.");
+            return;
+        }
+
+        int prevCount = previousAnimals.Count;
+        int targetPreviousCount;
+        if (prevCount == 1)
+        {
+            targetPreviousCount = 2;
+        }
+        else if (prevCount == 2)
+        {
+            targetPreviousCount = Random.Range(2, 4);
+        }
+        else
+        {
+            targetPreviousCount = Random.Range(3, 5);
+        }
+
+        targetPreviousCount = Mathf.Clamp(targetPreviousCount, 1, (totalQuestions - 2) / 2);
+
+        // Candidates exclude first question (index 0) and last question (index totalQuestions - 1)
+        List<int> candidateIndices = new List<int>();
+        for (int i = 1; i < totalQuestions - 1; i++)
+        {
+            candidateIndices.Add(i);
+        }
+
+        // Shuffle candidate indices with Fisher-Yates
+        for (int i = candidateIndices.Count - 1; i > 0; i--)
+        {
+            int r = Random.Range(0, i + 1);
+            int temp = candidateIndices[i];
+            candidateIndices[i] = candidateIndices[r];
+            candidateIndices[r] = temp;
+        }
+
+        // Pick slots ensuring no two danger spirit questions are consecutive
+        List<int> selectedIndices = new List<int>();
+        foreach (int candidate in candidateIndices)
+        {
+            if (selectedIndices.Count >= targetPreviousCount)
+                break;
+
+            bool adjacent = false;
+            foreach (int sel in selectedIndices)
+            {
+                if (Mathf.Abs(sel - candidate) <= 1)
+                {
+                    adjacent = true;
+                    break;
+                }
+            }
+
+            if (!adjacent)
+            {
+                selectedIndices.Add(candidate);
+            }
+        }
+
+        foreach (int idx in selectedIndices)
+        {
+            if (idx >= 0 && idx < _questionIsTargetPlan.Count)
+            {
+                _questionIsTargetPlan[idx] = false;
+            }
+        }
+
+        Debug.Log("[GameManager] Generated Question Plan for " + totalQuestions + " questions. Active Target: " + AnimalShopManager.GetLatestUnlockedAnimal() + " | Danger Spirit slots: " + selectedIndices.Count + " (Indices: " + string.Join(", ", selectedIndices) + ")");
     }
 
     public void PauseGame()
@@ -411,7 +525,7 @@ public class GameManager : MonoBehaviour
 
             SpawnRandomQuestion();
 
-            questionTimer = questionDuration;
+            questionTimer = isCurrentAnimalTarget ? questionDuration : dangerAnimalDuration;
 
             while (
                 questionTimer > 0f &&
@@ -420,7 +534,9 @@ public class GameManager : MonoBehaviour
             )
             {
                 if (!isPaused)
+                {
                     questionTimer -= Time.deltaTime;
+                }
 
                 yield return null;
             }
@@ -439,7 +555,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("TIME UP on Danger/Previous Animal (" + currentAnimalName + ")! Correctly ignored, no life lost.");
+                    Debug.Log("TIME UP on Danger Spirit (" + currentAnimalName + ")! Correctly avoided, no life lost.");
                 }
 
                 if (!gameRunning)
@@ -454,7 +570,7 @@ public class GameManager : MonoBehaviour
                 yield break;
             }
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(transitionDelay);
 
             if (!gameRunning)
                 yield break;
@@ -469,28 +585,43 @@ public class GameManager : MonoBehaviour
         string latestAnimal = AnimalShopManager.GetLatestUnlockedAnimal();
         List<string> previousAnimals = AnimalShopManager.GetPreviousUnlockedAnimals();
 
-        if (previousAnimals.Count > 0 && Random.value < 0.45f)
+        int planIndex = currentQuestion - 1;
+        bool isTarget = true;
+
+        if (planIndex >= 0 && planIndex < _questionIsTargetPlan.Count)
         {
-            currentAnimalName = previousAnimals[Random.Range(0, previousAnimals.Count)];
-            isCurrentAnimalTarget = false;
+            isTarget = _questionIsTargetPlan[planIndex];
         }
         else
         {
-            currentAnimalName = latestAnimal;
-            isCurrentAnimalTarget = true;
+            isTarget = (previousAnimals == null || previousAnimals.Count == 0);
         }
 
-        string[] colors = { "Red", "Blue", "Yellow", "Green" };
-        currentCorrectColor = colors[Random.Range(0, colors.Length)];
-
-        currentSprite = GetAnimalSprite(currentAnimalName, currentCorrectColor);
+        if (!isTarget && previousAnimals != null && previousAnimals.Count > 0)
+        {
+            // Danger Spirit Spawn (Traps)
+            currentAnimalName = previousAnimals[Random.Range(0, previousAnimals.Count)];
+            isCurrentAnimalTarget = false;
+            currentCorrectColor = ""; // No matching answer for Danger Spirit!
+            currentSprite = GetDangerSpiritSprite(currentAnimalName);
+        }
+        else
+        {
+            // Active Target Animal Spawn (Color Matching)
+            currentAnimalName = latestAnimal;
+            isCurrentAnimalTarget = true;
+            string[] colors = { "Red", "Blue", "Yellow", "Green" };
+            currentCorrectColor = colors[Random.Range(0, colors.Length)];
+            currentSprite = GetAnimalSprite(currentAnimalName, currentCorrectColor);
+        }
 
         if (spawnPoints == null || spawnPoints.Length == 0 || questionImage == null)
             return;
 
         int randomSpawnIndex = Random.Range(0, spawnPoints.Length);
+        _currentSpawnPointPosition = spawnPoints[randomSpawnIndex].position;
+        questionImage.transform.position = _currentSpawnPointPosition;
 
-        questionImage.transform.position = spawnPoints[randomSpawnIndex].position;
         if (currentSprite != null)
         {
             questionImage.sprite = currentSprite;
@@ -500,9 +631,9 @@ public class GameManager : MonoBehaviour
         AnimatePopIn();
 
         Debug.Log(
-            "Spawned: " + currentAnimalName +
-            " | Color: " + currentCorrectColor +
-            " | IsTarget: " + isCurrentAnimalTarget +
+            "Spawned Q" + currentQuestion + "/" + totalQuestions +
+            ": " + currentAnimalName +
+            (isCurrentAnimalTarget ? (" | Color: " + currentCorrectColor) : " | DANGER SPIRIT (Do NOT tap!)") +
             " | Spawn: " + spawnPoints[randomSpawnIndex].name
         );
     }
@@ -546,6 +677,29 @@ public class GameManager : MonoBehaviour
             if (c == "Blue") return blueLion != null ? blueLion : FindSpriteByName("Blue Lion");
             if (c == "Yellow") return yellowLion != null ? yellowLion : FindSpriteByName("Yellow Lion");
             if (c == "Green") return greenLion != null ? greenLion : FindSpriteByName("Green Lion");
+        }
+
+        return null;
+    }
+
+    private Sprite GetDangerSpiritSprite(string animalName)
+    {
+        string animal = AnimalShopManager.NormalizeAnimalName(animalName);
+        if (animal == AnimalShopManager.ANIMAL_BEAR)
+        {
+            return dangerBear != null ? dangerBear : (FindSpriteByName("BrownBear") ?? FindSpriteByName("Brown Bear") ?? FindSpriteByName("Bear Profile"));
+        }
+        else if (animal == AnimalShopManager.ANIMAL_FOX)
+        {
+            return dangerFox != null ? dangerFox : (FindSpriteByName("Orange Danger Fox") ?? FindSpriteByName("Fox"));
+        }
+        else if (animal == AnimalShopManager.ANIMAL_ELEPHANT)
+        {
+            return dangerElephant != null ? dangerElephant : (FindSpriteByName("Grey Danger Elephant") ?? FindSpriteByName("Elephant"));
+        }
+        else if (animal == AnimalShopManager.ANIMAL_TIGER)
+        {
+            return dangerTiger != null ? dangerTiger : (FindSpriteByName("Orange Danger Tiger") ?? FindSpriteByName("Tiger"));
         }
 
         return null;
@@ -605,7 +759,10 @@ public class GameManager : MonoBehaviour
     private IEnumerator PopInQuestion()
     {
         if (questionImage == null)
+        {
+            popCoroutine = null;
             yield break;
+        }
 
         questionImage.gameObject.SetActive(true);
 
@@ -622,12 +779,16 @@ public class GameManager : MonoBehaviour
         }
 
         questionImage.transform.localScale = targetScale;
+        popCoroutine = null;
     }
 
     private IEnumerator PopOutQuestion()
     {
         if (questionImage == null)
+        {
+            popCoroutine = null;
             yield break;
+        }
 
         float duration = 0.25f;
         float timer = 0f;
@@ -643,6 +804,7 @@ public class GameManager : MonoBehaviour
 
         questionImage.transform.localScale = Vector3.zero;
         questionImage.gameObject.SetActive(false);
+        popCoroutine = null;
     }
 
     public void CheckAnswer(string selectedColor)
@@ -657,7 +819,7 @@ public class GameManager : MonoBehaviour
 
         if (!isCurrentAnimalTarget)
         {
-            Debug.Log("WRONG! Clicked button on Danger/Previous Animal (" + currentAnimalName + ")! Life lost.");
+            Debug.Log("WRONG! Clicked button (" + selectedColor + ") on Danger Spirit (" + currentAnimalName + ")! Life lost.");
 
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlayWrongAnswer();
@@ -676,6 +838,8 @@ public class GameManager : MonoBehaviour
 
             if (AudioManager.Instance != null)
                 AudioManager.Instance.PlayCorrectAnswer();
+
+            PlayConfetti(questionImage != null ? questionImage.transform.position : (Vector3?)null);
 
             if (CoinManager.Instance != null)
             {
@@ -773,6 +937,8 @@ public class GameManager : MonoBehaviour
 
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlayLevelCompleted();
+
+        PlayConfetti(null);
 
         Debug.Log(
             "LEVEL COMPLETE! Correct Answers: " +
@@ -887,5 +1053,161 @@ public class GameManager : MonoBehaviour
     public void GreenButton()
     {
         CheckAnswer("Green");
+    }
+
+    private void EnsureCanvasAndCameraSetup()
+    {
+        Canvas canvas = FindFirstObjectByType<Canvas>();
+        if (canvas != null)
+        {
+            Camera cam = Camera.main;
+            if (cam == null) cam = FindFirstObjectByType<Camera>();
+            if (cam != null && canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                canvas.renderMode = RenderMode.ScreenSpaceCamera;
+                canvas.worldCamera = cam;
+                canvas.planeDistance = 50f;
+            }
+        }
+    }
+
+    private void AutoFindConfetti()
+    {
+        GameObject confettiObj = GameObject.Find("Confetti");
+        if (confettiObj != null)
+        {
+            ParticleSystem[] allPS = confettiObj.GetComponentsInChildren<ParticleSystem>(true);
+            if (allPS != null && allPS.Length > 0)
+            {
+                if (confettiParticleSystem == null)
+                    confettiParticleSystem = allPS[0];
+                if (confettiParticleSystem2 == null && allPS.Length > 1)
+                    confettiParticleSystem2 = allPS[1];
+            }
+
+            ParticleSystemRenderer[] allRenderers = confettiObj.GetComponentsInChildren<ParticleSystemRenderer>(true);
+            foreach (ParticleSystemRenderer psr in allRenderers)
+            {
+                if (psr != null)
+                {
+                    psr.sortingLayerName = "Default";
+                    psr.sortingOrder = 500;
+                    psr.maskInteraction = SpriteMaskInteraction.None;
+                }
+            }
+        }
+
+        if (confettiParticleSystem != null)
+        {
+            ParticleSystemRenderer psr = confettiParticleSystem.GetComponent<ParticleSystemRenderer>();
+            if (psr != null)
+            {
+                psr.sortingLayerName = "Default";
+                psr.sortingOrder = 500;
+                psr.maskInteraction = SpriteMaskInteraction.None;
+            }
+        }
+
+        if (confettiParticleSystem2 != null)
+        {
+            ParticleSystemRenderer psr2 = confettiParticleSystem2.GetComponent<ParticleSystemRenderer>();
+            if (psr2 != null)
+            {
+                psr2.sortingLayerName = "Default";
+                psr2.sortingOrder = 500;
+                psr2.maskInteraction = SpriteMaskInteraction.None;
+            }
+        }
+    }
+
+    private void StopConfetti()
+    {
+        if (confettiParticleSystem != null)
+        {
+            confettiParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+
+        if (confettiParticleSystem2 != null)
+        {
+            confettiParticleSystem2.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
+
+        GameObject confettiObj = GameObject.Find("Confetti");
+        if (confettiObj != null)
+        {
+            ParticleSystem[] allPS = confettiObj.GetComponentsInChildren<ParticleSystem>(true);
+            foreach (ParticleSystem ps in allPS)
+            {
+                if (ps != null)
+                {
+                    ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
+            }
+        }
+    }
+
+    public void PlayConfetti(Vector3? spawnPosition = null)
+    {
+        AutoFindConfetti();
+
+        bool played = false;
+
+        if (confettiParticleSystem != null)
+        {
+            confettiParticleSystem.gameObject.SetActive(true);
+            confettiParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            confettiParticleSystem.Play(true);
+            played = true;
+        }
+
+        if (confettiParticleSystem2 != null)
+        {
+            confettiParticleSystem2.gameObject.SetActive(true);
+            confettiParticleSystem2.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            confettiParticleSystem2.Play(true);
+            played = true;
+        }
+
+        GameObject confettiObj = GameObject.Find("Confetti");
+        if (confettiObj != null)
+        {
+            confettiObj.SetActive(true);
+            ParticleSystem[] allPS = confettiObj.GetComponentsInChildren<ParticleSystem>(true);
+            foreach (ParticleSystem ps in allPS)
+            {
+                if (ps != null && ps != confettiParticleSystem && ps != confettiParticleSystem2)
+                {
+                    ps.gameObject.SetActive(true);
+                    ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    ps.Play(true);
+                    played = true;
+                }
+            }
+        }
+
+        if (!played && confettiPrefab != null)
+        {
+            Vector3 pos = spawnPosition ?? (questionImage != null ? questionImage.transform.position : Vector3.zero);
+            GameObject instance = Instantiate(confettiPrefab, pos, Quaternion.identity);
+            ParticleSystem[] psList = instance.GetComponentsInChildren<ParticleSystem>(true);
+            ParticleSystemRenderer[] psrList = instance.GetComponentsInChildren<ParticleSystemRenderer>(true);
+            foreach (ParticleSystemRenderer psr in psrList)
+            {
+                if (psr != null)
+                {
+                    psr.sortingLayerName = "Default";
+                    psr.sortingOrder = 500;
+                    psr.maskInteraction = SpriteMaskInteraction.None;
+                }
+            }
+            foreach (ParticleSystem ps in psList)
+            {
+                if (ps != null)
+                {
+                    ps.Play(true);
+                }
+            }
+            Destroy(instance, 5f);
+        }
     }
 }

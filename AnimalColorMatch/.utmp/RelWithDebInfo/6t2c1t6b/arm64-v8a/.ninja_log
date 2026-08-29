@@ -1,0 +1,23 @@
+# ninja log v5
+24	3043	8093597363009948	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	f23733264b56fb8
+129	785	8093597340484432	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	236b6053d2a3da9
+35	2712	8093597359292005	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	20769731aca662f0
+787	1043	8093597342719776	D:/AnimalColorMatch/AnimalColorMatch/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6t2c1t6b/obj/arm64-v8a/libswappywrapper.so	d163e88c4aa7a748
+57	2699	8093597359292005	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	c25822218a741678
+95	2901	8093597361612235	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	717d98433a9f22ad
+1	2709	8093597359347138	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	2f3a6d522ddc251c
+13	2722	8093597359723463	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	2fdadf45eaf79f19
+110	2714	8093597359608859	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	1bf06363ce0b3117
+78	2948	8093597362099177	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	da039c263ac6af25
+3044	3282	8093597365439725	D:/AnimalColorMatch/AnimalColorMatch/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6t2c1t6b/obj/arm64-v8a/libgame.so	2735b237203907b0
+180	921	8096959396580986	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	236b6053d2a3da9
+921	1378	8096959400861049	D:/AnimalColorMatch/AnimalColorMatch/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6t2c1t6b/obj/arm64-v8a/libswappywrapper.so	d163e88c4aa7a748
+164	10149	8096959488708716	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	20769731aca662f0
+102	10151	8096959488708716	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	c25822218a741678
+68	10153	8096959488708716	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	2f3a6d522ddc251c
+119	10156	8096959488895513	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	1bf06363ce0b3117
+49	10159	8096959488915525	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	2fdadf45eaf79f19
+149	10334	8096959490735559	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	da039c263ac6af25
+23	10426	8096959491623850	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	f23733264b56fb8
+134	10442	8096959491791220	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	717d98433a9f22ad
+10443	10675	8096959494125657	D:/AnimalColorMatch/AnimalColorMatch/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/6t2c1t6b/obj/arm64-v8a/libgame.so	2735b237203907b0

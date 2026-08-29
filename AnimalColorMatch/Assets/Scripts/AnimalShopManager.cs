@@ -13,6 +13,7 @@ public class AnimalShopManager : MonoBehaviour
     public const string ANIMAL_LION = "Lion";
 
     public const string UNLOCKED_PREF_PREFIX = "AnimalUnlocked_";
+    public const string BUILD_GUID_KEY = "Build_Instance_GUID";
 
     public static readonly Dictionary<string, int> AnimalPrices = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
     {
@@ -25,6 +26,62 @@ public class AnimalShopManager : MonoBehaviour
 
     public static event Action<string> OnAnimalUnlocked;
     public static event Action OnShopUpdated;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static void CheckBuildInitialization()
+    {
+        string currentBuildId = Application.buildGUID;
+        if (string.IsNullOrEmpty(currentBuildId))
+        {
+            currentBuildId = "DEV_BUILD_" + Application.version;
+        }
+
+        string savedBuildId = PlayerPrefs.GetString(BUILD_GUID_KEY, "");
+
+        if (!PlayerPrefs.HasKey(BUILD_GUID_KEY) || savedBuildId != currentBuildId)
+        {
+            Debug.Log("[AnimalShopManager] New build detected (ID: " + currentBuildId + "). Initializing fresh player state: 0 coins, Bear default.");
+            ResetToFreshPlayerState();
+            PlayerPrefs.SetString(BUILD_GUID_KEY, currentBuildId);
+            PlayerPrefs.Save();
+        }
+        else
+        {
+            EnsureDefaultUnlocks();
+        }
+    }
+
+    [ContextMenu("Reset to Fresh Player State")]
+    public void ContextMenuResetPlayerState()
+    {
+        ResetToFreshPlayerState();
+    }
+
+    public static void ResetToFreshPlayerState()
+    {
+        // 1. Reset Coins to 0
+        PlayerPrefs.SetInt("PlayerCoins", 0);
+        if (CoinManager.Instance != null)
+        {
+            CoinManager.Instance.ResetCoins();
+        }
+
+        // 2. Lock all animals except Bear
+        string[] lockableAnimals = { ANIMAL_FOX, ANIMAL_ELEPHANT, ANIMAL_TIGER, ANIMAL_LION };
+        foreach (string animal in lockableAnimals)
+        {
+            PlayerPrefs.DeleteKey(UNLOCKED_PREF_PREFIX + animal);
+            PlayerPrefs.SetInt(UNLOCKED_PREF_PREFIX + animal, 0);
+        }
+
+        // 3. Ensure Bear is default unlocked
+        PlayerPrefs.SetInt(UNLOCKED_PREF_PREFIX + ANIMAL_BEAR, 1);
+        PlayerPrefs.Save();
+
+        Debug.Log("[AnimalShopManager] Player state reset complete: Coins = 0, Active Default Animal = Bear, Locked Animals = Fox, Elephant, Tiger, Lion.");
+
+        OnShopUpdated?.Invoke();
+    }
 
     private void Awake()
     {
@@ -40,7 +97,7 @@ public class AnimalShopManager : MonoBehaviour
         EnsureDefaultUnlocks();
     }
 
-    private void EnsureDefaultUnlocks()
+    private static void EnsureDefaultUnlocks()
     {
         if (!PlayerPrefs.HasKey(UNLOCKED_PREF_PREFIX + ANIMAL_BEAR))
         {

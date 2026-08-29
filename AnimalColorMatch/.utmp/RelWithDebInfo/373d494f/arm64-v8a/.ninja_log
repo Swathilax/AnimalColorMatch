@@ -1,0 +1,12 @@
+# ninja log v5
+353	1444	8089561217227960	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	9bb08ac54dc6971d
+1446	2213	8089561223634899	D:/Animal-Color-Match/AnimalColorMatch/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/373d494f/obj/arm64-v8a/libswappywrapper.so	b925e818ff8fd018
+104	17629	8089561378689483	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	390d958fd0f6a02f
+6	17638	8089561378316684	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	e842f8d033da969f
+320	17640	8089561378566787	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	84c5ff7b5ef535af
+250	17643	8089561378295775	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	1825fc0b7610a037
+143	17646	8089561378285815	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	a620a3700d7280c5
+179	17819	8089561381217209	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	49a2ec924412b935
+284	17927	8089561382197889	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	9e45549c641d4d00
+43	17959	8089561382385108	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	1a0a918fac428dfc
+17959	18345	8089561386544563	D:/Animal-Color-Match/AnimalColorMatch/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/373d494f/obj/arm64-v8a/libgame.so	ff48b19b64d2ae06
